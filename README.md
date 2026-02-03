@@ -1,78 +1,62 @@
-<p align="center">
-  <img src="https://github.com/tacticlaunch/mcp-linear/blob/main/docs/linear-app-icon.png?raw=true" alt="Linear App Icon" width="250" height="250">
-</p>
+# Linear MCP Plus
 
-# MCP Linear
+> Enhanced fork of [@tacticlaunch/mcp-linear](https://github.com/tacticlaunch/mcp-linear) with bug fixes and additional tools.
 
-A Model Context Protocol (MCP) server implementation for the Linear GraphQL API that enables AI assistants to interact with Linear project management systems.
+A Model Context Protocol (MCP) server for the Linear GraphQL API that enables AI assistants to interact with Linear project management systems.
 
-![MCP Linear](https://img.shields.io/badge/MCP-Linear-blue)
-[![npm version](https://img.shields.io/npm/v/@tacticlaunch/mcp-linear.svg)](https://www.npmjs.com/package/@tacticlaunch/mcp-linear)
-[![smithery badge](https://smithery.ai/badge/@tacticlaunch/mcp-linear)](https://smithery.ai/server/@tacticlaunch/mcp-linear)
+## What's New in This Fork
 
-<a href="https://glama.ai/mcp/servers/@tacticlaunch/mcp-linear">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@tacticlaunch/mcp-linear/badge" />
-</a>
+### Bug Fixes
 
-## Features
+- **State Field Fix**: `linear_getIssueById` and `linear_getIssues` now properly return the `state` field with `{ id, name, color, type }` instead of an empty object `{}`
 
-MCP Linear bridges the gap between AI assistant and Linear (project management tool) by implementing the MCP protocol. This allows to:
+### New Tools
 
-- Retrieve issues, projects, teams, and other data from Linear
-- Create and update issues
-- Change issue status
-- Assign issues to team members
-- Add comments
-- Create projects and teams
+| Tool | Description |
+|------|-------------|
+| `linear_projectUpdateCreate` | Create project updates with health status (onTrack, atRisk, offTrack) |
+| `linear_initiativeUpdateCreate` | Create initiative updates with health status |
+| `linear_documentCreate` | Create documents in Linear (optionally linked to a project) |
+| `linear_updateProjectLead` | Assign or remove a project lead |
 
-## Example prompts
-
-Once connected, you can use prompts like:
-
-- "Show me all my Linear issues"
-- "Create a new issue titled 'Fix login bug' in the Frontend team"
-- "Change the status of issue FE-123 to 'In Progress'"
-- "Assign issue BE-456 to John Smith"
-- "Add a comment to issue UI-789: 'This needs to be fixed by Friday'"
+---
 
 ## Installation
 
-### Getting Your Linear API Token
+### Prerequisites
 
-To use MCP Linear, you'll need a Linear API token. Here's how to get one:
+- Node.js >= 20.0.0
+- Linear API Token ([How to get one](#getting-your-linear-api-token))
 
-1. Log in to your Linear account at [linear.app](https://linear.app)
-2. Click on organization avatar (in the top-left corner)
-3. Select **Settings**
-4. Navigate to **Security & access** in the left sidebar
-5. Under **Personal API Keys** click **New API Key**
-6. Give your key a name (e.g., `MCP Linear Integration`)
-7. Copy the generated API token and store it securely - you won't be able to see it again!
-
-### Installing via [Smithery](https://smithery.ai/server/@tacticlaunch/mcp-linear) (Recommended)
-
-- To install MCP Linear for Cursor:
+### Option 1: npm (Recommended)
 
 ```bash
-npx -y @smithery/cli install @tacticlaunch/mcp-linear --client cursor
+npm install -g @daht-mad/linear-mcp-plus
 ```
 
-- To install MCP Linear for Claude Desktop:
+### Option 2: Local Build
 
 ```bash
-npx -y @smithery/cli install @tacticlaunch/mcp-linear --client claude
+git clone https://github.com/daht-mad/linear-mcp-plus.git
+cd linear-mcp-plus
+npm install
+npm run build
 ```
 
-### Manual Configuration
+---
 
-Add the following to your MCP settings file:
+## Configuration
+
+Add to your MCP configuration file (`~/.mcp.json` or client-specific location):
+
+### Using npm package
 
 ```json
 {
   "mcpServers": {
     "linear": {
       "command": "npx",
-      "args": ["-y", "@tacticlaunch/mcp-linear"],
+      "args": ["-y", "@daht-mad/linear-mcp-plus"],
       "env": {
         "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
       }
@@ -81,60 +65,151 @@ Add the following to your MCP settings file:
 }
 ```
 
-#### Client-Specific Configuration Locations
+### Using local build
 
-- Cursor: `~/.cursor/mcp.json`
-- Claude Desktop: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Claude VSCode Extension: `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
-- GoMCP: `~/.config/gomcp/config.yaml`
-
-### Manual run
-
-Prerequisites
-
-- Node.js (v18+)
-- NPM or Yarn
-- Linear API token
-
-```bash
-# Install globally
-npm install -g @tacticlaunch/mcp-linear
-
-# Or clone and install locally
-git clone https://github.com/tacticlaunch/mcp-linear.git
-cd mcp-linear
-npm install
-npm link  # Makes the package available globally
+```json
+{
+  "mcpServers": {
+    "linear": {
+      "command": "node",
+      "args": ["/path/to/linear-mcp-plus/dist/index.js"],
+      "env": {
+        "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
+      }
+    }
+  }
+}
 ```
 
-#### Running the Server
+### Client-Specific Config Locations
 
-Run the server with your Linear API token:
+| Client | Config Path |
+|--------|-------------|
+| Claude Code | `~/.mcp.json` |
+| Cursor | `~/.cursor/mcp.json` |
+| Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 
-```bash
-mcp-linear --token YOUR_LINEAR_API_TOKEN
-```
+---
 
-Or set the token in your environment and run without arguments:
+## Getting Your Linear API Token
 
-```bash
-export LINEAR_API_TOKEN=YOUR_LINEAR_API_TOKEN
-mcp-linear
-```
+1. Log in to [linear.app](https://linear.app)
+2. Click organization avatar (top-left) → **Settings**
+3. Navigate to **Security & access** → **Personal API Keys**
+4. Click **New API Key**, name it, and copy the token
+
+---
 
 ## Available Tools
 
-See [TOOLS.md](https://github.com/tacticlaunch/mcp-linear/blob/main/TOOLS.md) for a complete list of available tools and planned features.
+### Issues
+
+| Tool | Description |
+|------|-------------|
+| `linear_getIssues` | Get recent issues |
+| `linear_getIssueById` | Get issue by ID or identifier (e.g., `ABC-123`) |
+| `linear_searchIssues` | Search issues with filters |
+| `linear_createIssue` | Create a new issue |
+| `linear_updateIssue` | Update an existing issue |
+| `linear_archiveIssue` | Archive an issue |
+| `linear_assignIssue` | Assign issue to a user |
+| `linear_setIssuePriority` | Set issue priority |
+| `linear_addIssueLabel` | Add label to issue |
+| `linear_removeIssueLabel` | Remove label from issue |
+| `linear_createComment` | Add comment to issue |
+| `linear_getComments` | Get issue comments |
+| `linear_getIssueHistory` | Get issue change history |
+| `linear_createIssueRelation` | Create relation between issues |
+| `linear_convertIssueToSubtask` | Convert issue to subtask |
+| `linear_subscribeToIssue` | Subscribe to issue updates |
+| `linear_transferIssue` | Transfer issue to another team |
+| `linear_duplicateIssue` | Duplicate an issue |
+| `linear_addIssueToCycle` | Add issue to a cycle |
+
+### Projects
+
+| Tool | Description |
+|------|-------------|
+| `linear_getProjects` | Get all projects |
+| `linear_getProjectIssues` | Get issues in a project |
+| `linear_createProject` | Create a new project |
+| `linear_updateProject` | Update project details |
+| `linear_addIssueToProject` | Add issue to project |
+| `linear_projectUpdateCreate` | **NEW** - Create project update with health status |
+| `linear_updateProjectLead` | **NEW** - Assign/remove project lead |
+
+### Initiatives
+
+| Tool | Description |
+|------|-------------|
+| `linear_getInitiatives` | Get all initiatives |
+| `linear_getInitiativeById` | Get initiative by ID |
+| `linear_createInitiative` | Create a new initiative |
+| `linear_updateInitiative` | Update initiative details |
+| `linear_archiveInitiative` | Archive an initiative |
+| `linear_deleteInitiative` | Delete an initiative |
+| `linear_getInitiativeProjects` | Get projects in an initiative |
+| `linear_addProjectToInitiative` | Add project to initiative |
+| `linear_removeProjectFromInitiative` | Remove project from initiative |
+| `linear_initiativeUpdateCreate` | **NEW** - Create initiative update with health status |
+
+### Documents
+
+| Tool | Description |
+|------|-------------|
+| `linear_documentCreate` | **NEW** - Create a document (optionally linked to project) |
+
+### Organization
+
+| Tool | Description |
+|------|-------------|
+| `linear_getViewer` | Get current authenticated user |
+| `linear_getOrganization` | Get organization info |
+| `linear_getUsers` | Get all users |
+| `linear_getTeams` | Get all teams |
+| `linear_getLabels` | Get all labels |
+| `linear_getWorkflowStates` | Get workflow states for a team |
+| `linear_getCycles` | Get all cycles |
+| `linear_getActiveCycle` | Get active cycle for a team |
+
+---
+
+## Example Prompts
+
+```
+"Show me all my Linear issues"
+"Create a new issue titled 'Fix login bug' in the Frontend team"
+"Change the status of issue FE-123 to 'In Progress'"
+"Add a project update for project X: 'Sprint completed successfully' with health onTrack"
+"Create a document titled 'Architecture Overview' with the markdown content"
+"Assign John as the lead for the Mobile App project"
+```
+
+---
 
 ## Development
 
-See [DEVELOPMENT.md](https://github.com/tacticlaunch/mcp-linear/blob/main/DEVELOPMENT.md) for more information on how to develop locally.
+```bash
+# Install dependencies
+npm install
 
-## Links
+# Build
+npm run build
 
-[tacticlaunch/cursor-memory-bank](https://github.com/tacticlaunch/cursor-memory-bank) - If you are a developer seeking to enhance your workflow with Cursor, consider giving it a try.
+# Run locally
+node dist/index.js
+```
 
+---
+
+## Credits
+
+This project is a fork of [@tacticlaunch/mcp-linear](https://github.com/tacticlaunch/mcp-linear).
+
+Thanks to the original authors for the excellent foundation.
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) for details.
