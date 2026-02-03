@@ -5,6 +5,7 @@ import {
   isUpdateProjectArgs,
   isProjectUpdateCreateInput,
   isUpdateProjectLeadArgs,
+  isGetProjectUpdatesArgs,
 } from '../type-guards.js';
 import { LinearService } from '../../services/linear-service.js';
 import { logError } from '../../utils/config.js';
@@ -138,6 +139,21 @@ export function handleUpdateProjectLead(linearService: LinearService) {
       return await linearService.updateProjectLead(args.projectId, args.leadId);
     } catch (error) {
       logError('Error updating project lead', error);
+      throw error;
+    }
+  };
+}
+
+export function handleGetProjectUpdates(linearService: LinearService) {
+  return async (args: unknown) => {
+    try {
+      if (!isGetProjectUpdatesArgs(args)) {
+        throw new Error('Invalid arguments for getProjectUpdates');
+      }
+
+      return await linearService.getProjectUpdates(args.projectId, args.limit);
+    } catch (error) {
+      logError('Error getting project updates', error);
       throw error;
     }
   };

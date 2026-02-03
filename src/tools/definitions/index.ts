@@ -30,6 +30,7 @@ import {
   getProjectIssuesToolDefinition,
   updateProjectLeadToolDefinition,
   projectUpdateCreateToolDefinition,
+  getProjectUpdatesToolDefinition,
 } from './project-tools.js';
 import { getTeamsToolDefinition, getWorkflowStatesToolDefinition } from './team-tools.js';
 import {
@@ -68,6 +69,7 @@ export const allToolDefinitions: MCPToolDefinition[] = [
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
   projectUpdateCreateToolDefinition,
+  getProjectUpdatesToolDefinition,
 
   // Cycle Management tools
   getCyclesToolDefinition,
@@ -141,6 +143,7 @@ export {
   getProjectIssuesToolDefinition,
   updateProjectLeadToolDefinition,
   projectUpdateCreateToolDefinition,
+  getProjectUpdatesToolDefinition,
 
   // Cycle Management tools
   getCyclesToolDefinition,

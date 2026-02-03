@@ -287,3 +287,52 @@ export const updateProjectLeadToolDefinition: MCPToolDefinition = {
     },
   },
 };
+
+/**
+ * Tool definition for getting project updates
+ */
+export const getProjectUpdatesToolDefinition: MCPToolDefinition = {
+  name: 'linear_getProjectUpdates',
+  description: 'Get updates for a project',
+  input_schema: {
+    type: 'object',
+    properties: {
+      projectId: {
+        type: 'string',
+        description: 'ID of the project to get updates for',
+      },
+      limit: {
+        type: 'number',
+        description: 'Maximum number of updates to return (default: 25)',
+      },
+    },
+    required: ['projectId'],
+  },
+  output_schema: {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        body: { type: 'string' },
+        health: { type: 'string' },
+        createdAt: { type: 'string' },
+        updatedAt: { type: 'string' },
+        user: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+          },
+        },
+        project: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+          },
+        },
+      },
+    },
+  },
+};

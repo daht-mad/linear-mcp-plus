@@ -969,3 +969,16 @@ export function isUpdateProjectLeadArgs(args: unknown): args is {
       (args as { leadId: string | null }).leadId === null)
   );
 }
+
+export function isGetProjectUpdatesArgs(args: unknown): args is {
+  projectId: string;
+  limit?: number;
+} {
+  return (
+    typeof args === 'object' &&
+    args !== null &&
+    'projectId' in args &&
+    typeof (args as { projectId: string }).projectId === 'string' &&
+    (!('limit' in args) || typeof (args as { limit: number }).limit === 'number')
+  );
+}
