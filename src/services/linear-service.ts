@@ -1183,6 +1183,48 @@ export class LinearService {
   }
 
   /**
+   * Update a project's lead
+   * @param projectId ID of the project to update
+   * @param leadId ID of the user to set as lead, or null to remove
+   * @returns Success status and project details
+   */
+  async updateProjectLead(projectId: string, leadId: string | null) {
+    try {
+      const project = await this.client.project(projectId);
+      if (!project) {
+        throw new Error(`Project with ID ${projectId} not found`);
+      }
+
+      const updatePayload = await this.client.updateProject(projectId, {
+        leadId: leadId,
+      });
+
+      if (updatePayload.success) {
+        const updatedProject = await this.client.project(projectId);
+        const leadData = updatedProject.lead ? await updatedProject.lead : null;
+
+        return {
+          success: true,
+          project: {
+            id: updatedProject.id,
+            lead: leadData
+              ? {
+                  id: leadData.id,
+                  name: leadData.name,
+                }
+              : null,
+          },
+        };
+      } else {
+        throw new Error('Failed to update project lead');
+      }
+    } catch (error) {
+      console.error('Error updating project lead:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Add an issue to a project
    * @param issueId ID of the issue to add
    * @param projectId ID of the project
@@ -2142,6 +2184,92 @@ export class LinearService {
     } catch (error) {
       console.error('Error removing project from initiative:', error);
       throw error;
+    }
+  }
+
+  async createInitiativeUpdate(
+    initiativeId: string,
+    body: string,
+    health?: 'onTrack' | 'atRisk' | 'offTrack' | 'complete',
+  ) {
+    try {
+      const initiative = await this.client.initiative(initiativeId);
+      if (!initiative) {
+        throw new Error(`Initiative with ID ${initiativeId} not found`);
+      }
+
+      const mutation = `
+        mutation InitiativeUpdateCreate($input: InitiativeUpdateCreateInput!) {
+          initiativeUpdateCreate(input: $input) {
+            success
+            initiativeUpdate {
+              id
+            }
+          }
+        }
+      `;
+
+      const variables = {
+        input: {
+          initiativeId: initiativeId,
+          body: body,
+          ...(health && { health: health }),
+        },
+      };
+
+      const result = await this.client.client.rawRequest(mutation, variables);
+      const data = result.data as any;
+
+      if (data?.initiativeUpdateCreate?.success) {
+        return {
+          success: true,
+          initiativeUpdate: {
+            id: data.initiativeUpdateCreate.initiativeUpdate.id,
+          },
+        };
+      } else {
+        throw new Error('Failed to create initiative update');
+      }
+    } catch (error) {
+      console.error('Error creating initiative update:', error);
+      throw error;
+    }
+  }
+
+  async createDocument(args: { title: string; content: string; projectId?: string }) {
+    const mutation = `
+      mutation CreateDoc($input: DocumentCreateInput!) {
+        documentCreate(input: $input) {
+          success
+          document {
+            id
+            title
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        title: args.title,
+        content: args.content,
+        ...(args.projectId && { projectId: args.projectId }),
+      },
+    };
+
+    const result = await this.client.client.rawRequest(mutation, variables);
+    const data = result.data as any;
+
+    if (data?.documentCreate?.success) {
+      return {
+        success: true,
+        document: {
+          id: data.documentCreate.document.id,
+          title: data.documentCreate.document.title,
+        },
+      };
+    } else {
+      throw new Error('Failed to create document');
     }
   }
 }

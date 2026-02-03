@@ -9,6 +9,7 @@ import {
   isGetInitiativeProjectsInput,
   isAddProjectToInitiativeInput,
   isRemoveProjectFromInitiativeInput,
+  isInitiativeUpdateCreateInput,
 } from '../type-guards.js';
 
 export function getInitiativesHandler(linearService: LinearService) {
@@ -151,6 +152,23 @@ export function removeProjectFromInitiativeHandler(linearService: LinearService)
       args.projectId,
     );
     console.log(`[removeProjectFromInitiative] Project removed successfully`);
+    return result;
+  };
+}
+
+export function initiativeUpdateCreateHandler(linearService: LinearService) {
+  return async (args: unknown) => {
+    if (!isInitiativeUpdateCreateInput(args)) {
+      throw new Error('Invalid input for initiativeUpdateCreate');
+    }
+
+    console.log(`[initiativeUpdateCreate] Creating update for initiative: ${args.initiativeId}`);
+    const result = await linearService.createInitiativeUpdate(
+      args.initiativeId,
+      args.body,
+      args.health,
+    );
+    console.log(`[initiativeUpdateCreate] Initiative update created successfully`);
     return result;
   };
 }

@@ -391,4 +391,39 @@ export const initiativeToolDefinitions: MCPToolDefinition[] = [
       },
     },
   },
+  {
+    name: 'linear_initiativeUpdateCreate',
+    description: 'Create an initiative update in Linear',
+    input_schema: {
+      type: 'object',
+      properties: {
+        initiativeId: {
+          type: 'string',
+          description: 'The ID of the initiative to create an update for',
+        },
+        body: {
+          type: 'string',
+          description: 'The body of the update (Markdown supported)',
+        },
+        health: {
+          type: 'string',
+          description: 'The health status of the initiative',
+          enum: ['onTrack', 'atRisk', 'offTrack', 'complete'],
+        },
+      },
+      required: ['initiativeId', 'body'],
+    },
+    output_schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean' },
+        initiativeUpdate: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+          },
+        },
+      },
+    },
+  },
 ];

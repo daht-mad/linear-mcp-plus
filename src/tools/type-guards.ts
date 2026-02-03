@@ -888,3 +888,84 @@ export function isRemoveProjectFromInitiativeInput(args: unknown): args is {
     typeof (args as { projectId: string }).projectId === 'string'
   );
 }
+
+/**
+ * Type guard for linear_documentCreate tool arguments
+ */
+export function isCreateDocumentArgs(args: unknown): args is {
+  title: string;
+  content: string;
+  projectId?: string;
+} {
+  return (
+    typeof args === 'object' &&
+    args !== null &&
+    'title' in args &&
+    typeof (args as { title: string }).title === 'string' &&
+    'content' in args &&
+    typeof (args as { content: string }).content === 'string' &&
+    (!('projectId' in args) || typeof (args as { projectId: string }).projectId === 'string')
+  );
+}
+
+/**
+ * Type guard for linear_initiativeUpdateCreate tool arguments
+ */
+export function isInitiativeUpdateCreateInput(args: unknown): args is {
+  initiativeId: string;
+  body: string;
+  health?: 'onTrack' | 'atRisk' | 'offTrack' | 'complete';
+} {
+  return (
+    typeof args === 'object' &&
+    args !== null &&
+    'initiativeId' in args &&
+    typeof (args as { initiativeId: string }).initiativeId === 'string' &&
+    'body' in args &&
+    typeof (args as { body: string }).body === 'string' &&
+    (!('health' in args) ||
+      ['onTrack', 'atRisk', 'offTrack', 'complete'].includes(
+        (args as { health: string }).health,
+      ))
+  );
+}
+
+/**
+ * Type guard for linear_projectUpdateCreate tool arguments
+ */
+export function isProjectUpdateCreateInput(args: unknown): args is {
+  projectId: string;
+  body: string;
+  health?: 'onTrack' | 'atRisk' | 'offTrack' | 'complete';
+} {
+  return (
+    typeof args === 'object' &&
+    args !== null &&
+    'projectId' in args &&
+    typeof (args as { projectId: string }).projectId === 'string' &&
+    'body' in args &&
+    typeof (args as { body: string }).body === 'string' &&
+    (!('health' in args) ||
+      ['onTrack', 'atRisk', 'offTrack', 'complete'].includes(
+        (args as { health: string }).health,
+      ))
+  );
+}
+
+/**
+ * Type guard for linear_updateProjectLead tool arguments
+ */
+export function isUpdateProjectLeadArgs(args: unknown): args is {
+  projectId: string;
+  leadId: string | null;
+} {
+  return (
+    typeof args === 'object' &&
+    args !== null &&
+    'projectId' in args &&
+    typeof (args as { projectId: string }).projectId === 'string' &&
+    'leadId' in args &&
+    (typeof (args as { leadId: string | null }).leadId === 'string' ||
+      (args as { leadId: string | null }).leadId === null)
+  );
+}

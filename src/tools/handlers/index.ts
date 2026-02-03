@@ -28,6 +28,8 @@ import {
   handleUpdateProject,
   handleAddIssueToProject,
   handleGetProjectIssues,
+  handleProjectUpdateCreate,
+  handleUpdateProjectLead,
 } from './project-handlers.js';
 import { handleGetTeams, handleGetWorkflowStates } from './team-handlers.js';
 import {
@@ -54,7 +56,9 @@ import {
   getInitiativeProjectsHandler,
   addProjectToInitiativeHandler,
   removeProjectFromInitiativeHandler,
+  initiativeUpdateCreateHandler,
 } from './initiative-handlers.js';
+import { handleCreateDocument } from './document-handlers.js';
 
 /**
  * Registers all tool handlers for the MCP Linear
@@ -81,11 +85,16 @@ export function registerToolHandlers(linearService: LinearService) {
     linear_updateProject: handleUpdateProject(linearService),
     linear_addIssueToProject: handleAddIssueToProject(linearService),
     linear_getProjectIssues: handleGetProjectIssues(linearService),
+    linear_projectUpdateCreate: handleProjectUpdateCreate(linearService),
+    linear_updateProjectLead: handleUpdateProjectLead(linearService),
 
     // Cycle Management tools
     linear_getCycles: handleGetCycles(linearService),
     linear_getActiveCycle: handleGetActiveCycle(linearService),
     linear_addIssueToCycle: handleAddIssueToCycle(linearService),
+
+    // Document tools
+    linear_documentCreate: handleCreateDocument(linearService),
 
     // Initiative Management tools
     linear_getInitiatives: getInitiativesHandler(linearService),
@@ -98,6 +107,7 @@ export function registerToolHandlers(linearService: LinearService) {
     linear_getInitiativeProjects: getInitiativeProjectsHandler(linearService),
     linear_addProjectToInitiative: addProjectToInitiativeHandler(linearService),
     linear_removeProjectFromInitiative: removeProjectFromInitiativeHandler(linearService),
+    linear_initiativeUpdateCreate: initiativeUpdateCreateHandler(linearService),
 
     // Issue tools
     linear_getIssues: handleGetIssues(linearService),
@@ -162,6 +172,8 @@ export {
   handleUpdateProject,
   handleAddIssueToProject,
   handleGetProjectIssues,
+  handleProjectUpdateCreate,
+  handleUpdateProjectLead,
 
   // Cycle Management handlers
   handleGetCycles,
@@ -179,4 +191,5 @@ export {
   getInitiativeProjectsHandler,
   addProjectToInitiativeHandler,
   removeProjectFromInitiativeHandler,
+  initiativeUpdateCreateHandler,
 };
