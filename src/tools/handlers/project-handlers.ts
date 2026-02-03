@@ -3,6 +3,8 @@ import {
   isCreateProjectArgs,
   isGetProjectIssuesArgs,
   isUpdateProjectArgs,
+  isProjectUpdateCreateInput,
+  isUpdateProjectLeadArgs,
 } from '../type-guards.js';
 import { LinearService } from '../../services/linear-service.js';
 import { logError } from '../../utils/config.js';
@@ -88,6 +90,54 @@ export function handleGetProjectIssues(linearService: LinearService) {
       return await linearService.getProjectIssues(args.projectId, args.limit);
     } catch (error) {
       logError('Error getting project issues', error);
+      throw error;
+    }
+  };
+}
+
+/**
+ * Handler for creating a project update
+ */
+export function handleProjectUpdateCreate(linearService: LinearService) {
+  return async (args: unknown) => {
+    try {
+      if (!isProjectUpdateCreateInput(args)) {
+        throw new Error('Invalid arguments for projectUpdateCreate');
+      }
+
+      const result = await linearService.createProjectUpdate({
+        projectId: args.projectId,
+        body: args.body,
+        health: args.health,
+      });
+
+      return {
+        success: true,
+        projectUpdate: {
+          id: result.id,
+          url: result.project.id,
+        },
+      };
+    } catch (error) {
+      logError('Error creating project update', error);
+      throw error;
+    }
+  };
+}
+
+/**
+ * Handler for updating a project's lead
+ */
+export function handleUpdateProjectLead(linearService: LinearService) {
+  return async (args: unknown) => {
+    try {
+      if (!isUpdateProjectLeadArgs(args)) {
+        throw new Error('Invalid arguments for updateProjectLead');
+      }
+
+      return await linearService.updateProjectLead(args.projectId, args.leadId);
+    } catch (error) {
+      logError('Error updating project lead', error);
       throw error;
     }
   };

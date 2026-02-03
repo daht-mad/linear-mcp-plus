@@ -206,3 +206,84 @@ export const getProjectIssuesToolDefinition: MCPToolDefinition = {
     },
   },
 };
+
+/**
+ * Tool definition for creating a project update
+ */
+export const projectUpdateCreateToolDefinition: MCPToolDefinition = {
+  name: 'linear_projectUpdateCreate',
+  description: 'Create a project update in Linear',
+  input_schema: {
+    type: 'object',
+    properties: {
+      projectId: {
+        type: 'string',
+        description: 'ID of the project to create an update for',
+      },
+      body: {
+        type: 'string',
+        description: 'Body of the project update (Markdown supported)',
+      },
+      health: {
+        type: 'string',
+        description: 'Health status of the project (onTrack, atRisk, offTrack, complete)',
+        enum: ['onTrack', 'atRisk', 'offTrack', 'complete'],
+      },
+    },
+    required: ['projectId', 'body'],
+  },
+  output_schema: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean' },
+      projectUpdate: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          url: { type: 'string' },
+        },
+      },
+    },
+  },
+};
+
+/**
+ * Tool definition for updating a project's lead
+ */
+export const updateProjectLeadToolDefinition: MCPToolDefinition = {
+  name: 'linear_updateProjectLead',
+  description: "Update a project's lead user",
+  input_schema: {
+    type: 'object',
+    properties: {
+      projectId: {
+        type: 'string',
+        description: 'ID of the project to update',
+      },
+      leadId: {
+        type: ['string', 'null'],
+        description: 'ID of the user to set as project lead, or null to remove the lead',
+      },
+    },
+    required: ['projectId', 'leadId'],
+  },
+  output_schema: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean' },
+      project: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          lead: {
+            type: ['object', 'null'],
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  },
+};

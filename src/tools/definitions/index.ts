@@ -28,6 +28,8 @@ import {
   updateProjectToolDefinition,
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
+  updateProjectLeadToolDefinition,
+  projectUpdateCreateToolDefinition,
 } from './project-tools.js';
 import { getTeamsToolDefinition, getWorkflowStatesToolDefinition } from './team-tools.js';
 import {
@@ -43,6 +45,7 @@ import {
   addIssueToCycleToolDefinition,
 } from './cycle-tools.js';
 import { initiativeToolDefinitions } from './initiative-tools.js';
+import { createDocumentToolDefinition } from './document-tools.js';
 
 // All tool definitions
 export const allToolDefinitions: MCPToolDefinition[] = [
@@ -64,6 +67,7 @@ export const allToolDefinitions: MCPToolDefinition[] = [
   updateProjectToolDefinition,
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
+  projectUpdateCreateToolDefinition,
 
   // Cycle Management tools
   getCyclesToolDefinition,
@@ -135,9 +139,13 @@ export {
   updateProjectToolDefinition,
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
+  updateProjectLeadToolDefinition,
 
   // Cycle Management tools
   getCyclesToolDefinition,
   getActiveCycleToolDefinition,
   addIssueToCycleToolDefinition,
+
+  // Document tools
+  createDocumentToolDefinition,
 };

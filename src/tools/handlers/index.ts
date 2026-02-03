@@ -180,6 +180,9 @@ export {
   handleGetActiveCycle,
   handleAddIssueToCycle,
 
+  // Document handlers
+  handleCreateDocument,
+
   // Initiative Management handlers
   getInitiativesHandler,
   getInitiativeByIdHandler,
