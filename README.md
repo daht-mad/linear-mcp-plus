@@ -4,11 +4,55 @@
 
 A Model Context Protocol (MCP) server for the Linear GraphQL API that enables AI assistants to interact with Linear project management systems.
 
+---
+
+## Why This Fork Exists
+
+### The Problem
+
+While using the original `@tacticlaunch/mcp-linear` with Claude Code for daily project management, I encountered two significant limitations:
+
+**1. The State Bug**
+
+When fetching issues via `linear_getIssueById` or `linear_getIssues`, the `state` field always returned an empty object `{}` instead of the actual workflow state data. This meant my AI assistant couldn't tell me whether an issue was "Todo", "In Progress", or "Done" — a pretty fundamental piece of information for project management.
+
+```typescript
+// What I got:
+{ id: "ABC-123", title: "Fix bug", state: {} }
+
+// What I needed:
+{ id: "ABC-123", title: "Fix bug", state: { id: "...", name: "In Progress", type: "started" } }
+```
+
+The root cause was that the Linear SDK uses promise-based relationships for related objects. The `state` field needs to be awaited before accessing its properties, but two methods in the original codebase missed this pattern (while `searchIssues` handled it correctly).
+
+**2. Missing Tools for My Workflow**
+
+I had custom Python and JavaScript scripts for:
+- Creating **project updates** (weekly/sprint status reports with health indicators)
+- Creating **initiative updates** (similar to project updates, but at a higher level)
+- Creating **documents** directly in Linear projects
+- Batch-updating **project leads** across multiple projects
+
+These scripts worked, but I wanted everything unified in the MCP so my AI assistant could handle it all without switching contexts.
+
+### The Solution
+
+Instead of maintaining separate scripts, I forked the original MCP and:
+
+1. **Fixed the state bug** by applying the correct async/await pattern to `getIssues()` and `getIssueById()` methods
+2. **Added 4 new tools** that cover the missing functionality
+3. **Published as a separate package** so others facing similar issues can benefit
+
+---
+
 ## What's New in This Fork
 
 ### Bug Fixes
 
-- **State Field Fix**: `linear_getIssueById` and `linear_getIssues` now properly return the `state` field with `{ id, name, color, type }` instead of an empty object `{}`
+| Issue | Fix |
+|-------|-----|
+| `state` field returns `{}` | Now properly awaits the promise and returns `{ id, name, color, type }` |
 
 ### New Tools
 
@@ -178,11 +222,12 @@ Add to your MCP configuration file (`~/.mcp.json` or client-specific location):
 
 ```
 "Show me all my Linear issues"
+"What's the status of issue FE-123?"
 "Create a new issue titled 'Fix login bug' in the Frontend team"
-"Change the status of issue FE-123 to 'In Progress'"
-"Add a project update for project X: 'Sprint completed successfully' with health onTrack"
-"Create a document titled 'Architecture Overview' with the markdown content"
-"Assign John as the lead for the Mobile App project"
+"Add a project update: 'Sprint 5 completed, all features shipped' with health onTrack"
+"Create a document titled 'API Design' in the Backend project"
+"Assign Alice as the lead for the Mobile App project"
+"Create an initiative update for Q1 Goals: 'On track to hit 80% completion'"
 ```
 
 ---
@@ -199,6 +244,40 @@ npm run build
 # Run locally
 node dist/index.js
 ```
+
+---
+
+## Technical Notes
+
+### The State Bug Fix
+
+The Linear SDK uses lazy-loaded promise-based relationships. When you access `issue.state`, you get a Promise, not the actual state object. The fix:
+
+```typescript
+// Before (buggy):
+return { state: issue.state }  // Returns {}
+
+// After (fixed):
+const stateData = issue.state ? await issue.state : null;
+return {
+  state: stateData ? {
+    id: stateData.id,
+    name: stateData.name,
+    color: stateData.color,
+    type: stateData.type,
+  } : null
+}
+```
+
+### New Tools Implementation
+
+The 4 new tools follow the existing codebase patterns:
+- Tool definitions in `src/tools/definitions/`
+- Type guards in `src/tools/type-guards.ts`
+- Handlers in `src/tools/handlers/`
+- Service methods in `src/services/linear-service.ts`
+
+For `initiativeUpdateCreate` and `documentCreate`, I used GraphQL `rawRequest` since the Linear SDK doesn't expose these mutations directly.
 
 ---
 
