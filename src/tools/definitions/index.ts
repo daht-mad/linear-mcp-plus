@@ -140,6 +140,7 @@ export {
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
   updateProjectLeadToolDefinition,
+  projectUpdateCreateToolDefinition,
 
   // Cycle Management tools
   getCyclesToolDefinition,
