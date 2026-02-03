@@ -116,11 +116,21 @@ export class LinearService {
           color: label.color,
         }));
 
+        // Get state data
+        const stateData = issue.state ? await issue.state : null;
+
         return {
           id: issue.id,
           title: issue.title,
           description: issue.description,
-          state: issue.state,
+          state: stateData
+            ? {
+                id: stateData.id,
+                name: stateData.name,
+                color: stateData.color,
+                type: stateData.type,
+              }
+            : null,
           priority: issue.priority,
           estimate: issue.estimate,
           dueDate: issue.dueDate,
@@ -206,11 +216,21 @@ export class LinearService {
       color: label.color,
     }));
 
+    // Get state data
+    const stateData = issue.state ? await issue.state : null;
+
     return {
       id: issue.id,
       title: issue.title,
       description: issue.description,
-      state: issue.state,
+      state: stateData
+        ? {
+            id: stateData.id,
+            name: stateData.name,
+            color: stateData.color,
+            type: stateData.type,
+          }
+        : null,
       priority: issue.priority,
       estimate: issue.estimate,
       dueDate: issue.dueDate,
