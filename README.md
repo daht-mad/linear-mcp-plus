@@ -6,6 +6,48 @@ A Model Context Protocol (MCP) server for the Linear GraphQL API that enables AI
 
 ---
 
+## Quick Start
+
+### 1. Get Your Linear API Token
+
+1. Log in to [linear.app](https://linear.app)
+2. Click organization avatar (top-left) → **Settings**
+3. Navigate to **Security & access** → **Personal API Keys**
+4. Click **New API Key**, name it, and copy the token
+
+### 2. Add to Your MCP Config
+
+Edit `~/.mcp.json` (create if it doesn't exist):
+
+```json
+{
+  "mcpServers": {
+    "linear": {
+      "command": "npx",
+      "args": ["-y", "@daht-mad/linear-mcp-plus"],
+      "env": {
+        "LINEAR_API_TOKEN": "lin_api_xxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+### 3. Restart Your AI Client
+
+Restart Claude Code, Cursor, or your MCP-compatible client. Done!
+
+```text
+"Show me my Linear issues"
+"Create an issue titled 'Fix bug' in the Frontend team"
+```
+
+> **Where to store the token?**
+> Always store your token in the `env` section of `.mcp.json`, not in `.zshrc` or `.bashrc`.
+> This keeps tokens scoped to MCP servers and avoids exposing them to all terminal sessions.
+
+---
+
 ## Why This Fork Exists
 
 ### The Problem
@@ -65,52 +107,17 @@ Instead of maintaining separate scripts, I forked the original MCP and:
 
 ---
 
-## Installation
+## Installation Options
 
 ### Prerequisites
 
 - Node.js >= 20.0.0
-- Linear API Token ([How to get one](#getting-your-linear-api-token))
+- Linear API Token (see [Quick Start](#quick-start) above)
 
----
+### Project-Specific Installation
 
-### Quick Start (Claude Code)
+If you need different Linear workspaces per project, create `.mcp.json` in your project root:
 
-**Step 1.** Linear API 토큰을 환경변수로 설정
-
-```bash
-# ~/.zshrc 또는 ~/.bashrc에 추가
-export LINEAR_API_TOKEN="lin_api_xxxxxxxxxx"
-```
-
-**Step 2.** MCP 서버 등록
-
-```bash
-claude mcp add linear -e LINEAR_API_TOKEN=$LINEAR_API_TOKEN -- npx -y @daht-mad/linear-mcp-plus
-```
-
-**Step 3.** Claude Code 재시작 후 사용!
-
-```
-"Show me my Linear issues"
-"Create an issue titled 'Fix bug' in the Frontend team"
-```
-
----
-
-### Alternative: Manual Configuration
-
-npm 설치 후 설정 파일을 직접 수정하는 방법입니다.
-
-#### 1. 패키지 설치
-
-```bash
-npm install -g @daht-mad/linear-mcp-plus
-```
-
-#### 2. MCP 설정 파일 수정
-
-**전역 설정** (`~/.mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -118,62 +125,45 @@ npm install -g @daht-mad/linear-mcp-plus
       "command": "npx",
       "args": ["-y", "@daht-mad/linear-mcp-plus"],
       "env": {
-        "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
+        "LINEAR_API_TOKEN": "<YOUR_PROJECT_SPECIFIC_TOKEN>"
       }
     }
   }
 }
 ```
 
-**프로젝트별 설정** (프로젝트 루트에 `.mcp.json` 생성):
-```json
-{
-  "mcpServers": {
-    "linear": {
-      "command": "npx",
-      "args": ["-y", "@daht-mad/linear-mcp-plus"],
-      "env": {
-        "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
-      }
-    }
-  }
-}
-```
-
-> 💡 **Tip**: 토큰을 하드코딩하기 싫다면 `.env` 파일과 함께 `"LINEAR_API_TOKEN": "${LINEAR_API_TOKEN}"` 형식으로 환경변수 참조 가능
-
----
-
-### Local Build (개발용)
+### Local Development Build
 
 ```bash
 git clone https://github.com/daht-mad/linear-mcp-plus.git
 cd linear-mcp-plus
 npm install
 npm run build
-
-# MCP 등록
-claude mcp add linear -- node /path/to/linear-mcp-plus/dist/index.js
 ```
 
----
+Then add to your `~/.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "linear": {
+      "command": "node",
+      "args": ["/absolute/path/to/linear-mcp-plus/dist/index.js"],
+      "env": {
+        "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
+      }
+    }
+  }
+}
+```
 
 ### Client-Specific Config Locations
 
-| Client | Config Path | CLI 명령 |
-|--------|-------------|----------|
-| **Claude Code** | `~/.mcp.json` | `claude mcp add` |
-| **Cursor** | `~/.cursor/mcp.json` | 수동 편집 |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` | 수동 편집 |
-
----
-
-## Getting Your Linear API Token
-
-1. Log in to [linear.app](https://linear.app)
-2. Click organization avatar (top-left) → **Settings**
-3. Navigate to **Security & access** → **Personal API Keys**
-4. Click **New API Key**, name it, and copy the token
+| Client | Global Config Path |
+|--------|---------------------------------------------------------------------|
+| **Claude Code** | `~/.mcp.json` |
+| **Cursor** | `~/.cursor/mcp.json` |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 
 ---
 
