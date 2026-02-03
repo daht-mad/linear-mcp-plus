@@ -72,29 +72,45 @@ Instead of maintaining separate scripts, I forked the original MCP and:
 - Node.js >= 20.0.0
 - Linear API Token ([How to get one](#getting-your-linear-api-token))
 
-### Option 1: npm (Recommended)
+---
+
+### Quick Start (Claude Code)
+
+**Step 1.** Linear API 토큰을 환경변수로 설정
+
+```bash
+# ~/.zshrc 또는 ~/.bashrc에 추가
+export LINEAR_API_TOKEN="lin_api_xxxxxxxxxx"
+```
+
+**Step 2.** MCP 서버 등록
+
+```bash
+claude mcp add linear -e LINEAR_API_TOKEN=$LINEAR_API_TOKEN -- npx -y @daht-mad/linear-mcp-plus
+```
+
+**Step 3.** Claude Code 재시작 후 사용!
+
+```
+"Show me my Linear issues"
+"Create an issue titled 'Fix bug' in the Frontend team"
+```
+
+---
+
+### Alternative: Manual Configuration
+
+npm 설치 후 설정 파일을 직접 수정하는 방법입니다.
+
+#### 1. 패키지 설치
 
 ```bash
 npm install -g @daht-mad/linear-mcp-plus
 ```
 
-### Option 2: Local Build
+#### 2. MCP 설정 파일 수정
 
-```bash
-git clone https://github.com/daht-mad/linear-mcp-plus.git
-cd linear-mcp-plus
-npm install
-npm run build
-```
-
----
-
-## Configuration
-
-Add to your MCP configuration file (`~/.mcp.json` or client-specific location):
-
-### Using npm package
-
+**전역 설정** (`~/.mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -109,14 +125,13 @@ Add to your MCP configuration file (`~/.mcp.json` or client-specific location):
 }
 ```
 
-### Using local build
-
+**프로젝트별 설정** (프로젝트 루트에 `.mcp.json` 생성):
 ```json
 {
   "mcpServers": {
     "linear": {
-      "command": "node",
-      "args": ["/path/to/linear-mcp-plus/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@daht-mad/linear-mcp-plus"],
       "env": {
         "LINEAR_API_TOKEN": "<YOUR_TOKEN>"
       }
@@ -125,13 +140,31 @@ Add to your MCP configuration file (`~/.mcp.json` or client-specific location):
 }
 ```
 
+> 💡 **Tip**: 토큰을 하드코딩하기 싫다면 `.env` 파일과 함께 `"LINEAR_API_TOKEN": "${LINEAR_API_TOKEN}"` 형식으로 환경변수 참조 가능
+
+---
+
+### Local Build (개발용)
+
+```bash
+git clone https://github.com/daht-mad/linear-mcp-plus.git
+cd linear-mcp-plus
+npm install
+npm run build
+
+# MCP 등록
+claude mcp add linear -- node /path/to/linear-mcp-plus/dist/index.js
+```
+
+---
+
 ### Client-Specific Config Locations
 
-| Client | Config Path |
-|--------|-------------|
-| Claude Code | `~/.mcp.json` |
-| Cursor | `~/.cursor/mcp.json` |
-| Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Client | Config Path | CLI 명령 |
+|--------|-------------|----------|
+| **Claude Code** | `~/.mcp.json` | `claude mcp add` |
+| **Cursor** | `~/.cursor/mcp.json` | 수동 편집 |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` | 수동 편집 |
 
 ---
 
