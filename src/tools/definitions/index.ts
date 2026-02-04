@@ -68,6 +68,7 @@ export const allToolDefinitions: MCPToolDefinition[] = [
   updateProjectToolDefinition,
   addIssueToProjectToolDefinition,
   getProjectIssuesToolDefinition,
+  updateProjectLeadToolDefinition,
   projectUpdateCreateToolDefinition,
   getProjectUpdatesToolDefinition,
 
@@ -102,6 +103,9 @@ export const allToolDefinitions: MCPToolDefinition[] = [
 
   // Comment Management tools
   getCommentsToolDefinition,
+
+  // Document tools
+  createDocumentToolDefinition,
 ];
 
 // Export all tool definitions individually
